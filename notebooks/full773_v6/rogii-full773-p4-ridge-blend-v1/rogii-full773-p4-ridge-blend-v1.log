@@ -1,0 +1,22 @@
+[{"stream_name":"stderr","time":9.525549723,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.525617089,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.525621923,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.525624739,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":10.296435996,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.296477617,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.296482405,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.296485149,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":11.655570166,"data":"input ok 464122 6f821297d3eff6355cf47a52232698a95b1c971cfd37818622af8b4ee3a2bd90\n"}
+,{"stream_name":"stdout","time":12.943079113,"data":"input_dir: ['rogii-wellbore-geology-prediction', 'full773-submission-candidates-lf']\n"}
+,{"stream_name":"stdout","time":14.334896627,"data":"sample candidates: ['/kaggle/input/rogii-wellbore-geology-prediction/sample_submission.csv']\n"}
+,{"stream_name":"stdout","time":14.334933937,"data":"wrote 463127 c3c291f442b245a2fe5324b74ba603723f5733432d9315e99593ea19c54874ab\n"}
+,{"stream_name":"stdout","time":14.334940427,"data":"rows 14151 pandas 2.3.3\n"}
+,{"stream_name":"stderr","time":17.658194452,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":17.658244129,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":17.864116159,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":17.864151367,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":18.664896295,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":19.051070681,"data":"[NbConvertApp] Writing 4158 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":22.194131792,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":23.207698996,"data":"[NbConvertApp] Writing 281620 bytes to __results__.html\n"}
+]
