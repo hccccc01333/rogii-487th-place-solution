@@ -75,7 +75,7 @@ def style_ax(ax, title=None, xlabel=None, ylabel=None):
 
 
 def figure_problem_definition():
-    """One real well: input log + target curve + reference typewell map."""
+    """One real well, split into three standalone figures."""
     well = "591cc951"
     hw, tw = load_well(well)
     known = hw["TVT_input"].notna().to_numpy()
@@ -93,13 +93,11 @@ def figure_problem_definition():
     tvt_min, tvt_max = hw.loc[eval_mask, "TVT"].min(), hw.loc[eval_mask, "TVT"].max()
     tw_ok = (tw["TVT"] >= tvt_min - 20) & (tw["TVT"] <= tvt_max + 20)
 
-    fig, axes = plt.subplots(1, 3, figsize=(16.5, 5.6), dpi=200)
-
-    ax = axes[0]
+    # ① input GR log
+    fig, ax = plt.subplots(figsize=(9.2, 5.0), dpi=200)
     ax.axvspan(0, anchor_md, color=BLUE, alpha=0.07)
     ax.axvspan(anchor_md, x.max(), color=ORANGE, alpha=0.09)
     ax.axvline(anchor_md, color=GRAY, ls="--", lw=1.3)
-    # missing spans
     for s, e in _nan_spans(gr_nan, x):
         ax.axvspan(s, e, color=GRAY, alpha=0.22, lw=0)
     ax.plot(x[known], gr_disp[known], color=BLUE, lw=1.4, label="已知前缀 GR")
@@ -113,10 +111,16 @@ def figure_problem_definition():
         ha="left",
         va="top",
     )
-    style_ax(ax, "① 水平井实测 GR 测井", "MD − 井口（ft）", "GR（API）")
+    style_ax(ax, "① 输入：水平井实测 GR 测井（真实井 591cc951）", "MD − 井口（ft）", "GR（API）")
     ax.legend(loc="upper right", fontsize=10)
+    fig.tight_layout()
+    out = os.path.join(ASSETS, "problem_input_log.png")
+    fig.savefig(out, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print("saved", out)
 
-    ax = axes[1]
+    # ② target TVT curve
+    fig, ax = plt.subplots(figsize=(9.2, 5.0), dpi=200)
     ax.axvspan(0, anchor_md, color=BLUE, alpha=0.07)
     ax.axvspan(anchor_md, x.max(), color=ORANGE, alpha=0.09)
     ax.axvline(anchor_md, color=GRAY, ls="--", lw=1.3)
@@ -125,36 +129,22 @@ def figure_problem_definition():
     ax.scatter([anchor_md], [anchor_tvt], s=55, color=ORANGE, zorder=5, edgecolor="white", linewidth=1.2)
     ax.set_ylim(tvt_min - 8, tvt_max + 8)
     ax.invert_yaxis()
-    ax.annotate(
-        f"目标曲线：评估区 TVT 在锚点下方最深约 {anchor_tvt - tvt_min:.0f} ft",
-        xy=(0.5 * x.max(), tvt_min + 2),
-        fontsize=10.5,
-        color=ORANGE,
-    )
-    style_ax(ax, "② 目标 TVT（地层垂直坐标）", "MD − 井口（ft）", "TVT（ft）")
+    style_ax(ax, "② 目标：TVT 地层垂直坐标（真实井 591cc951）", "MD − 井口（ft）", "TVT（ft）")
+    fig.tight_layout()
+    out = os.path.join(ASSETS, "problem_target_curve.png")
+    fig.savefig(out, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print("saved", out)
 
-    ax = axes[2]
+    # ③ reference typewell map
+    fig, ax = plt.subplots(figsize=(7.2, 5.0), dpi=200)
     ax.plot(tw["GR"], tw["TVT"], color=BLUE_L, lw=1.5)
     ax.axhspan(tvt_min - 5, tvt_max + 5, color=ORANGE, alpha=0.16)
     ax.axhline(anchor_tvt, color=GRAY, ls="--", lw=1.2)
     ax.invert_yaxis()
-    ax.annotate(
-        "橙色带 = 本井 TVT 所在层段",
-        xy=(tw["GR"].max() * 0.45, tvt_max + 3),
-        fontsize=10.5,
-        color=ORANGE,
-    )
-    style_ax(ax, "③ 参考直井（typewell）：GR–TVT 地图", "GR（API）", "TVT（ft）")
-
-    fig.suptitle(
-        f"问题定义：把“前方地层在哪一层”变成“把 ① 与 ③ 对齐，在 ② 上继续画曲线”"
-        f"（真实训练井 {well}）",
-        fontsize=15,
-        fontweight="bold",
-        y=1.02,
-    )
-    fig.tight_layout(rect=[0, 0, 1, 0.95])
-    out = os.path.join(ASSETS, "problem_schematic.png")
+    style_ax(ax, "③ 参考地图：typewell 的 GR–TVT 映射", "GR（API）", "TVT（ft）")
+    fig.tight_layout()
+    out = os.path.join(ASSETS, "problem_reference_map.png")
     fig.savefig(out, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print("saved", out)
@@ -216,31 +206,14 @@ def figure_alignment_panel():
     )
     ax.plot(md_rel, truth, color="#7EF9FF", ls="--", lw=2.2, label="真实 TVT 轨迹（相对锚点）")
     ax.axhline(0, color="white", lw=0.9, alpha=0.35)
-    ax.annotate(
-        "平行谷：GR 近似周期，多个深度都“看起来对”",
-        xy=(md_rel[-1] - 850, 52),
-        xytext=(md_rel[-1] - 2600, 62),
-        fontsize=11,
-        color="white",
-        arrowprops=dict(arrowstyle="->", color="white", lw=1.4),
-    )
-    ax.annotate(
-        "真实轨迹沿着暗谷走",
-        xy=(md_rel[int(n_col * 0.42)], truth[int(n_col * 0.42)]),
-        xytext=(md_rel[int(n_col * 0.42)] + 250, -75),
-        fontsize=11,
-        color="#7EF9FF",
-        arrowprops=dict(arrowstyle="->", color="#7EF9FF", lw=1.4),
-    )
     cb = fig.colorbar(mesh, ax=ax, pad=0.015)
     cb.set_label("GR 平方差（z-score 口径，越小越吻合）", fontsize=11)
     style_ax(
         ax,
-        "方向 1｜信号确实存在：GR 匹配谷 = 轨迹候选（真实井 591cc951 评估区，150 列抽样）",
+        "信号确实存在：GR 匹配谷 = 轨迹候选（真实井 591cc951 评估区，150 列抽样）",
         "MD − 锚点（ft，井前方）",
         "ΔTVT = 候选 TVT − 最后已知 TVT（ft）",
     )
-    ax.legend(loc="upper left", fontsize=11)
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     out = os.path.join(ASSETS, "eda_alignment_panel.png")
     fig.savefig(out, bbox_inches="tight", facecolor="white")
@@ -456,57 +429,93 @@ def figure_processing():
 
 
 def figure_score_progression():
-    milestones = [
-        ("常数外推", 15.883, "本地地板", BLUE),
-        ("LGBM 残差", 13.675, "本地", BLUE_L),
-        ("Dual-PF 复现", 7.113, "公开口径", TEAL),
-        ("GEO-2 物理先验", 7.008, "公榜最佳", TEAL),
-        ("V6 main×soft", 7.9488, "诚实 OOF*", ORANGE),
+    kept = [
+        ("常数外推", 15.883, BLUE, "07-15"),
+        ("门控 LGBM", 13.675, BLUE_L, "07-15"),
+        ("Dual-PF 复现", 7.113, TEAL, "07-18"),
+        ("GEO-2 物理先验", 7.008, TEAL, "07-20"),
     ]
-    xs = np.arange(len(milestones))
-    ys = [m[1] for m in milestones]
-    fig, ax = plt.subplots(figsize=(13.5, 6.0), dpi=200)
-    ax.plot(xs, ys, color=GRAY_L, lw=2, zorder=1)
-    for i, (label, val, tag, color) in enumerate(milestones):
-        marker = "o" if i < 4 else "D"
-        ax.scatter([i], [val], s=190 if i < 4 else 260, color=color, zorder=3,
-                   edgecolor="white", linewidth=1.8, marker=marker)
+    v6 = ("V6 main×soft", 7.9488, ORANGE, "08-05")
+    rejected = [
+        ("nnraw-1", 7.041),
+        ("nnraw-2", 7.103),
+        ("nnraw-3", 7.866),
+        ("dense-U", 7.517),
+        ("RK 残差", 17.904),
+        ("LGB 残差", 11.805),
+        ("align 残差", 9.225),
+        ("geo021", 7.556),
+    ]
+
+    fig, axes = plt.subplots(1, 2, figsize=(16.5, 6.2), dpi=200, gridspec_kw={"width_ratios": [1.25, 1]})
+
+    ax = axes[0]
+    xs = np.arange(len(kept))
+    ys = [m[1] for m in kept]
+    ax.plot(xs, ys, color=GRAY_L, lw=2.0, zorder=1)
+    ax.plot([xs[-1], 4.0], [ys[-1], v6[1]], color=ORANGE, lw=1.8, ls="--", zorder=1)
+    for i, (label, val, color, _) in enumerate(kept):
+        ax.scatter([i], [val], s=170, color=color, zorder=3, edgecolor="white", linewidth=1.6)
         ax.annotate(
-            f"{label}\n{val}",
+            f"{val}",
             xy=(i, val),
-            xytext=(i, val + 1.05),
+            xytext=(i, val + 1.0),
             ha="center",
             fontsize=12,
             fontweight="bold",
             color="#222222",
         )
-        ax.annotate(tag, xy=(i, val), xytext=(i, val - 2.6), ha="center", fontsize=10, color=GRAY)
-    ax.set_xticks(xs)
-    ax.set_xticklabels([m[0] for m in milestones], fontsize=11)
-    ax.set_ylim(3.5, 17.5)
-    ax.set_ylabel("RMSE（ft，越低越好）")
-    ax.invert_yaxis()
-    ax.text(
-        0.015,
-        0.96,
-        "每个里程碑的口径不同（本地 / 公开 / OOF），只展示相对提升，不做跨点直接比较",
-        transform=ax.transAxes,
-        fontsize=10.5,
-        color=GRAY,
-        va="top",
+        ax.annotate(
+            label,
+            xy=(i, val),
+            xytext=(i, val - 3.0),
+            ha="center",
+            fontsize=10.5,
+            color=GRAY,
+        )
+    ax.scatter([4.0], [v6[1]], s=250, color=ORANGE, zorder=4, marker="D",
+               edgecolor="white", linewidth=1.8)
+    ax.annotate(
+        f"{v6[1]}",
+        xy=(4.0, v6[1]),
+        xytext=(4.0, v6[1] + 1.0),
+        ha="center",
+        fontsize=12,
+        fontweight="bold",
+        color=ORANGE,
     )
-    ax.text(
-        0.015,
-        0.08,
-        "*V6 为按井分组的诚实 OOF（7.9488），比公榜口径更严格；最终 Private 排名 487 / 6,125（TOP 8%）",
-        transform=ax.transAxes,
+    ax.annotate(
+        "V6 main×soft",
+        xy=(4.0, v6[1]),
+        xytext=(4.0, v6[1] - 3.0),
+        ha="center",
         fontsize=10.5,
         color=ORANGE,
-        va="bottom",
     )
-    style_ax(ax, "方案演进：RMSE 从 15.883 降到 7.008（−56%），且最终方案经过最严格验证", None, None)
-    ax.grid(axis="y", alpha=0.6)
+    ax.set_xticks(list(xs) + [4.0])
+    ax.set_xticklabels([m[3] for m in kept] + ["08-05"], fontsize=11)
+    ax.set_ylim(3.5, 18.5)
+    ax.set_ylabel("RMSE（ft，越低越好）")
+    ax.invert_yaxis()
+    style_ax(ax, "① 采纳的路线：RMSE 从 15.883 降到 7.008", None, None)
+    ax.grid(axis="y", alpha=0.55)
     ax.grid(axis="x", visible=False)
+
+    ax = axes[1]
+    rej_sorted = sorted(rejected, key=lambda r: r[1])
+    labels = [r[0] for r in rej_sorted]
+    vals = [r[1] for r in rej_sorted]
+    ypos = np.arange(len(vals))
+    ax.barh(ypos, vals, color=GRAY_L, alpha=0.85, height=0.62)
+    for y, v, lab in zip(ypos, vals, labels):
+        ax.text(v + 0.25, y, f"{v}", va="center", fontsize=10.5, color="#444444")
+    ax.set_yticks(ypos)
+    ax.set_yticklabels(labels, fontsize=10.5)
+    ax.set_xlim(0, 19.5)
+    style_ax(ax, "② 被否决的尝试：8 个方向均未进入最终方案", "RMSE（ft）", None)
+    ax.grid(axis="x", alpha=0.55)
+    ax.grid(axis="y", visible=False)
+
     fig.tight_layout()
     out = os.path.join(ASSETS, "score_progression.png")
     fig.savefig(out, bbox_inches="tight", facecolor="white")

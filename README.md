@@ -40,7 +40,16 @@ Kaggle 竞赛：[ROGII - Wellbore Geology Prediction](https://www.kaggle.com/com
 目标曲线（TVT），③ 是参考直井提供的“地层地图”。任务可以概括为：**用 ① 和 ③
 对齐，把 ② 从已知段（蓝）继续画进评估区（橙）**。
 
-![真实井示例：输入测井 + 目标曲线 + 参考地图](assets/problem_schematic.png)
+| ① 输入：实测 GR 测井 | ② 目标：TVT 曲线 |
+|---|---|
+| ![输入测井](assets/problem_input_log.png) | ![目标曲线](assets/problem_target_curve.png) |
+
+| ③ 参考地图：typewell 的 GR–TVT 映射 |
+|---|
+| ![参考地图](assets/problem_reference_map.png) |
+
+> 图 ② 中：虚线 = 已知前缀的最后锚点；橙色点 = 锚点位置。图 ③ 中：橙色带 =
+> 本井 TVT 所在层段，虚线 = 锚点对应的参考深度。
 
 ---
 
@@ -100,8 +109,9 @@ Kaggle 竞赛：[ROGII - Wellbore Geology Prediction](https://www.kaggle.com/com
 
 把一口井的评估区渲染成一张 2D 面板：横轴是井前方位置，纵轴是候选 TVT 相对锚点的
 偏移，颜色是实测 GR 与参考直井 GR 的差异。**暗谷 = 该位置地层“最可能”所在的深度**。
-真实轨迹正好沿着谷走——信号是真实存在的。但 GR 近似周期导致多条平行谷，单独做
-全局匹配很容易选错层位，这就是必须以前缀为锚、做多尺度匹配的原因。
+图中白色虚线是这口井的真实 TVT 轨迹。可以看到：真实轨迹正好沿着谷走——信号是
+真实存在的；但 GR 近似周期导致多条平行谷（好几个深度都“看起来对”），单独做全局
+匹配很容易选错层位。这就是必须以前缀为锚、做多尺度匹配的原因。
 
 ![2D GR 对齐面板：把整口井渲染成一张图像](assets/eda_alignment_panel.png)
 
@@ -223,6 +233,11 @@ PARAM_*_FULL_lf.csv（Full773 候选）
 全局融合——每个都记录了失败分类与重开条件，而不是简单地“弃用”。
 
 ![方案演进图](assets/score_progression.png)
+
+> 口径说明：① 中前 4 个节点是公开榜（Public LB）口径，最后一个菱形（V6 7.9488）
+> 是按井分组的诚实 OOF 口径，比公榜更严格，因此数值“回弹”不代表退步；最终 Private
+> 排名 487 / 6,125（TOP 8%）。② 中 8 个被否决的尝试均记录过失败分类（角色错误 /
+> 公榜翻车 / 容量被当能力 / 嵌套 OOF 乐观），没有进入最终方案。
 
 ---
 
