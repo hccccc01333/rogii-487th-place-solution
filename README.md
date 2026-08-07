@@ -19,6 +19,8 @@ Kaggle 竞赛：[ROGII - Wellbore Geology Prediction](https://www.kaggle.com/com
 - **过程**：全程用 AI 工具（Codex / 网页 GPT-5.6 / 子 agent）搭建**可治理的实验流水线**：
   人负责问题定义与决策，AI 负责执行、日志与审计。
 
+![关键指标](assets/metrics_banner.png)
+
 ![方案演进](assets/score_progression.png)
 
 ---
@@ -33,6 +35,8 @@ Kaggle 竞赛：[ROGII - Wellbore Geology Prediction](https://www.kaggle.com/com
 （typewell），要求预测评估区（未知段）的逐行 TVT。
 
 **数据规模**：773 口训练井；隐藏测试约 200 口；公开样例仅 3 口井（14151 行）。
+
+![问题示意](assets/problem_schematic.png)
 
 ---
 
@@ -56,6 +60,8 @@ Kaggle 竞赛：[ROGII - Wellbore Geology Prediction](https://www.kaggle.com/com
 - 难点：**少数长而难的井主导总分**——我们的 EDA 显示最难 10% 的井贡献了约 57.8% 的
   总误差平方和。这决定了整场比赛的优化纪律：**可以改难井，但绝不允许牺牲普通井**。
 
+![端到端流程](assets/workflow_overview.png)
+
 ---
 
 ## 3. 数据分析（EDA）
@@ -70,6 +76,8 @@ Kaggle 竞赛：[ROGII - Wellbore Geology Prediction](https://www.kaggle.com/com
 
 - 按“井离锚点的垂直距离 / 前缀稳定性”分层，难度高度右偏；
 - 最难 10% 井贡献 57.8% SSE → 后续所有改进都按“普通井是否变差”做门禁。
+
+![难度集中度](assets/eda_difficulty.png)
 
 ### 3.3 信号分析
 
@@ -147,6 +155,8 @@ PARAM_*_FULL_lf.csv（Full773 候选）
 ---
 
 ## 7. 验证与防泄漏（严谨性）
+
+![5折验证协议](assets/cv_protocol.png)
 
 - **按井分组**：GroupKFold 5 折，同一口井全部样本同折；
 - **外折合同**：候选特征对生产者是 OOF 的，下游训练不再触碰验证折；
