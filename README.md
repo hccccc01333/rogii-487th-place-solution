@@ -4,6 +4,9 @@
 
 Kaggle 竞赛：[ROGII - Wellbore Geology Prediction](https://www.kaggle.com/competitions/rogii-wellbore-geology-prediction)
 
+> **开源与协作**：原创代码与文档采用 [MIT License](LICENSE)。欢迎通过 [Issue](https://github.com/hccccc01333/rogii-487th-place-solution/issues) 和 [Pull Request](https://github.com/hccccc01333/rogii-487th-place-solution/pulls) 参与。
+> 阅读 [贡献指南](CONTRIBUTING.md) 与 [复现说明](REPRODUCIBILITY.md)；竞赛/赛事数据及第三方资源不在此授权范围内。
+
 ---
 
 ## 总结（TL;DR）
